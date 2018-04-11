@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>net.cslvln.pw</groupId>
+    <artifactId>cl-parent</artifactId>
+    <version>${project.release.version}</version>
+    <!-- jar:java工程 war;web工程 pom;非java和web工程（父工程一般用这个,但是不生成target目录）-->
+    <packaging>pom</packaging>
+
+    <properties>
+        <project.release.version>0.1-SNAPSHOT</project.release.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <properties>
+                <project.release.version>0.1</project.release.version>
+            </properties>
+        </profile>
+    </profiles>
+
+    <distributionManagement>
+        <repository>
+            <id>nexus</id>
+            <name>Releases</name>
+            <url>http://localhost:8088/nexus/repository/maven-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus</id>
+            <name>Snapshot</name>
+            <url>http://localhost:8088/nexus/repository/maven-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <build>
+        <plugins>
+            <!-- maven 是个自动化构建工具，如果我们不告诉它我们的代码要使用什么样的jdk版本编译的话，它就会用maven-compiler-plugin默认的jdk版本来进行编译处理，这样就容易出现版本不匹配的问题，以至于可能导致编译不通过的问题-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            <!-- maven-source-plugin插件打出的包包含远吗，引用包含远吗的包，在IDEA等ide中查看源码文件时可以更容易读些。要生成带source的jar,需要在pom.xml中包含下面的插件
+            然后执行mvn install,打包成功的话，就可以在target文件夹中找到带source的jar包通常命名为xxx-version-sources.jar
+            注意：如果src/main/java中没有源码，则不生成-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
